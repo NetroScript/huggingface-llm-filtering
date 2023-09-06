@@ -1,5 +1,8 @@
-import { writable } from 'svelte/store';
-import type { SidePanel } from './common';
+import { type Writable, writable } from 'svelte/store';
+import type { LocalStorageValue, SidePanel } from './common';
+
+import { localStorageStore } from '@skeletonlabs/skeleton';
+import * as devalue from 'devalue';
 
 export const filterText = writable('');
 
@@ -9,3 +12,15 @@ export const sidePanelRight = writable<SidePanel>({
 	visible: true,
 	side: 'right'
 });
+
+export const state: Writable<LocalStorageValue> = localStorageStore(
+	'state',
+	{
+		lastUpdate: new Date(0),
+		author: 'TheBloke',
+		models: []
+	},
+	{
+		serializer: devalue
+	}
+);

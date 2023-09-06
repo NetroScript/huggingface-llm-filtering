@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { filterText } from '$lib/stores.js';
-	import { AppBar } from '@skeletonlabs/skeleton';
+	import {filterText} from '$lib/stores.js';
+	import {AppBar} from '@skeletonlabs/skeleton';
 	import PhGearFill from '~icons/ph/gear-fill';
-	import PhGithubLogoFill from '~icons/ph/github-logo-fill';
 	import PhMagnifyingGlass from '~icons/ph/magnifying-glass';
-	import { tooltip } from 'svooltip';
+	import {tooltip} from 'svooltip';
 
-	import { sidePanelRight } from '$lib/stores';
-	import type { SidePanel } from '$lib/common';
-	import { defaultTooltipOptions } from '$lib/common';
+	import {sidePanelRight} from '$lib/stores';
+	import type {SidePanel} from '$lib/common';
+	import {defaultTooltipOptions} from '$lib/common';
 
 	const ANIMATION_DURATION = 200; // 0.2 seconds in milliseconds
 
@@ -46,16 +45,6 @@
 </script>
 
 <AppBar gridColumns="!flex" slotDefault="place-self-center" slotTrail="place-content-end">
-	<svelte:fragment slot="lead">
-		<div class="hidden md:block">
-			<a
-				class="btn-icon variant-ghost align-middle"
-				href="https://github.com/NetroScript/huggingface-llm-filtering"
-			>
-				<PhGithubLogoFill />
-			</a> huggingface-llm-filtering
-		</div>
-	</svelte:fragment>
 	<div class="input-group input-group-divider grid-cols-[auto_1fr_auto] w-full">
 		<div class="input-group-shim">
 			<PhMagnifyingGlass />

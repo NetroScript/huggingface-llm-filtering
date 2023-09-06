@@ -1,4 +1,5 @@
 import type { Options } from 'svooltip/types';
+import type { Model } from '$lib/huggingfaceAPI';
 
 export type SidePanel = {
 	width: number;
@@ -20,4 +21,10 @@ export const defaultTooltipOptions: Options = {
 	},
 	target: '#tooltips',
 	delay: [1000, 0]
+};
+
+export type LocalStorageValue = {
+	lastUpdate: Date;
+	author: string;
+	models: Model[];
 };
