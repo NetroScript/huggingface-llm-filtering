@@ -23,7 +23,7 @@ export const defaultTooltipOptions: Options = {
 	delay: [1000, 0]
 };
 
-export enum FilterModes {
+export enum SortingModes {
 	TIME_ASC = 'TIME_ASC',
 	TIME_DESC = 'TIME_DESC',
 	LIKES_ASC = 'LIKES_ASC',
@@ -41,7 +41,7 @@ export interface LocalStorageValue {
 		allowedLicences: string[];
 		allowedModelSizes: string[];
 		allowedModelTypes: ModelTypes[];
-		filterMode: FilterModes;
+		filterMode: SortingModes;
 	};
 }
 
@@ -77,11 +77,10 @@ export const getModelType = (model: Model): ModelTypes => {
 };
 
 export const getModelSize = (model: Model): string => {
-	const nameParts = model.id.split('-');
+	const nameParts = model.id.toUpperCase().split(/[-_/]/);
 
-	// The part with /^\d+B$/ is the model size
 	for (const part of nameParts) {
-		if (/^\d+B$/.test(part)) {
+		if (/^\d+(\.\d)?B$/.test(part)) {
 			return part;
 		}
 	}

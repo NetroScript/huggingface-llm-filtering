@@ -1,6 +1,6 @@
 import { derived, type Writable, writable } from 'svelte/store';
 import type { LocalStorageValue, SidePanel } from './common';
-import { FilterModes, getModelSize } from './common';
+import { getModelSize, getModelType, SortingModes } from './common';
 
 import { localStorageStore } from '@skeletonlabs/skeleton';
 import * as devalue from 'devalue';
@@ -23,7 +23,7 @@ export const state: Writable<LocalStorageValue> = localStorageStore<LocalStorage
 			allowedLicences: [],
 			allowedModelSizes: [],
 			allowedModelTypes: [],
-			filterMode: FilterModes.TIME_DESC
+			filterMode: SortingModes.TIME_DESC
 		}
 	},
 	{
@@ -43,7 +43,10 @@ export const availableLicences = derived(state, ($state) => {
 			}
 		});
 	});
-	return Array.from(licences);
+	// Sort the array based on string length (shortest first)
+	return Array.from(licences).sort((a, b) => {
+		return a.length - b.length;
+	});
 });
 
 // Available Model Sizes
@@ -52,11 +55,19 @@ export const availableModelSizes = derived(state, ($state) => {
 	$state.models.forEach((model) => {
 		modelSizes.add(getModelSize(model));
 	});
-	return Array.from(modelSizes);
+
+	// Order the array by size (extract the number from the string)
+	return Array.from(modelSizes).sort((a, b) => {
+		// If it is not a number, assume infinity
+		const aSize = parseInt(a.substring(0, a.length - 1)) || Infinity;
+		const bSize = parseInt(b.substring(0, b.length - 1)) || Infinity;
+		return aSize - bSize;
+	});
 });
 
 export const filteredModels = derived(state, ($state) => {
 	let filtered = $state.models.filter((model) => {
+		// Check the name of the model
 		if (
 			$state.filters.name !== '' &&
 			!model.id.toLowerCase().includes($state.filters.name.toLowerCase())
@@ -64,36 +75,50 @@ export const filteredModels = derived(state, ($state) => {
 			return false;
 		}
 
+		// Check the model type
+		if ($state.filters.allowedModelTypes.length > 0) {
+			if (!$state.filters.allowedModelTypes.includes(getModelType(model))) {
+				return false;
+			}
+		}
+
+		// Check the model size
+		if ($state.filters.allowedModelSizes.length > 0) {
+			if (!$state.filters.allowedModelSizes.includes(getModelSize(model))) {
+				return false;
+			}
+		}
+
 		return true;
 	});
 
 	switch ($state.filters.filterMode) {
-		case FilterModes.TIME_ASC:
+		case SortingModes.TIME_ASC:
 			filtered = filtered.sort((a, b) => {
 				return a.lastModified.getTime() - b.lastModified.getTime();
 			});
 			break;
-		case FilterModes.TIME_DESC:
+		case SortingModes.TIME_DESC:
 			filtered = filtered.sort((a, b) => {
 				return b.lastModified.getTime() - a.lastModified.getTime();
 			});
 			break;
-		case FilterModes.LIKES_ASC:
+		case SortingModes.LIKES_ASC:
 			filtered = filtered.sort((a, b) => {
 				return a.likes - b.likes;
 			});
 			break;
-		case FilterModes.LIKES_DESC:
+		case SortingModes.LIKES_DESC:
 			filtered = filtered.sort((a, b) => {
 				return b.likes - a.likes;
 			});
 			break;
-		case FilterModes.DOWNLOADS_ASC:
+		case SortingModes.DOWNLOADS_ASC:
 			filtered = filtered.sort((a, b) => {
 				return a.downloads - b.downloads;
 			});
 			break;
-		case FilterModes.DOWNLOADS_DESC:
+		case SortingModes.DOWNLOADS_DESC:
 			filtered = filtered.sort((a, b) => {
 				return b.downloads - a.downloads;
 			});
@@ -102,3 +127,5 @@ export const filteredModels = derived(state, ($state) => {
 
 	return filtered;
 });
+
+export const forceRefresh = writable<boolean>(false);
