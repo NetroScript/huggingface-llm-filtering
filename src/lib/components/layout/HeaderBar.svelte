@@ -1,11 +1,10 @@
 <script lang="ts">
-	import {filterText} from '$lib/stores.js';
-	import {AppBar} from '@skeletonlabs/skeleton';
+	import {AppBar, LightSwitch} from '@skeletonlabs/skeleton';
 	import PhGearFill from '~icons/ph/gear-fill';
 	import PhMagnifyingGlass from '~icons/ph/magnifying-glass';
 	import {tooltip} from 'svooltip';
 
-	import {sidePanelRight} from '$lib/stores';
+	import {sidePanelRight, state} from '$lib/stores';
 	import type {SidePanel} from '$lib/common';
 	import {defaultTooltipOptions} from '$lib/common';
 
@@ -45,11 +44,14 @@
 </script>
 
 <AppBar gridColumns="!flex" slotDefault="place-self-center" slotTrail="place-content-end">
+	<svelte:fragment slot="lead">
+		<LightSwitch/>
+	</svelte:fragment>
 	<div class="input-group input-group-divider grid-cols-[auto_1fr_auto] w-full">
 		<div class="input-group-shim">
 			<PhMagnifyingGlass />
 		</div>
-		<input bind:value={$filterText} placeholder="Filter by Name" type="search" />
+		<input bind:value={$state.filters.name} placeholder="Filter by Name" type="search" />
 	</div>
 	<svelte:fragment slot="trail">
 		<button
