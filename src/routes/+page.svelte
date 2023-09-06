@@ -1,11 +1,11 @@
 <script lang="ts">
-	import {availableLicences, availableModelSizes, filteredModels, state} from '$lib/stores';
-	import {onMount} from 'svelte';
-	import type {Model} from '$lib/huggingfaceAPI';
-	import {ModelSchema} from '$lib/huggingfaceAPI';
+	import { availableLicences, availableModelSizes, filteredModels, state } from '$lib/stores';
+	import { onMount } from 'svelte';
+	import type { Model } from '$lib/huggingfaceAPI';
+	import { ModelSchema } from '$lib/huggingfaceAPI';
 	import ModelCard from '$lib/components/ModelCard.svelte';
-	import {ProgressRadial} from "@skeletonlabs/skeleton";
-	import InfiniteLoading, {type StateChanger} from 'svelte-infinite-loading';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import InfiniteLoading, { type StateChanger } from 'svelte-infinite-loading';
 
 	const updateModels = async () => {
 		const res = await fetch('https://huggingface.co/api/models?full=1&author=' + $state.author);
@@ -48,22 +48,24 @@
 	});
 
 	let shownModelCount = 50;
+	let loadingIdentifier = 0;
 
 	filteredModels.subscribe(() => {
 		shownModelCount = 50;
+		loadingIdentifier++;
 	});
 
 	$: currentShownModels = $filteredModels.slice(0, shownModelCount);
 
 	$: canShowMore = $filteredModels.length > shownModelCount;
 
-	let loadingIdentifier = 0;
+
 	const loadMore = async ({detail: {loaded, complete}} : ({detail: StateChanger}) )  => {
 
 		shownModelCount += 50;
 
 
-		if (shownModelCount >= $state.models.length) {
+		if (shownModelCount >= $filteredModels.length) {
 			complete();
 		} else {
 			loaded();
@@ -98,13 +100,14 @@
 			{#each currentShownModels as model, i}
 					<ModelCard {model} />
 			{/each}
-			<InfiniteLoading on:infinite={loadMore} distance={400} identifier={loadingIdentifier}>
-				<div slot="noMore"></div>
-			</InfiniteLoading>
+
 	</div>
 	{/if}
 
 	{#if canShowMore}
+		<InfiniteLoading on:infinite={loadMore} distance={400} identifier={loadingIdentifier}>
+			<div slot="noMore"></div>
+		</InfiniteLoading>
 		<ProgressRadial width="w-8 mx-auto" meter="stroke-surface-50" stroke="{150}"/>
 	{/if}
 </div>

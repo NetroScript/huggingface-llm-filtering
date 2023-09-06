@@ -75,3 +75,16 @@ export const getModelType = (model: Model): ModelTypes => {
 
 	return ModelTypes.OTHER;
 };
+
+export const getModelSize = (model: Model): string => {
+	const nameParts = model.id.split('-');
+
+	// The part with /^\d+B$/ is the model size
+	for (const part of nameParts) {
+		if (/^\d+B$/.test(part)) {
+			return part;
+		}
+	}
+
+	return 'Unknown';
+};

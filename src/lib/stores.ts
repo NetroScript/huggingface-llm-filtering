@@ -1,6 +1,6 @@
 import { derived, type Writable, writable } from 'svelte/store';
 import type { LocalStorageValue, SidePanel } from './common';
-import { FilterModes } from './common';
+import { FilterModes, getModelSize } from './common';
 
 import { localStorageStore } from '@skeletonlabs/skeleton';
 import * as devalue from 'devalue';
@@ -46,17 +46,11 @@ export const availableLicences = derived(state, ($state) => {
 	return Array.from(licences);
 });
 
-// Available Model Metadatas
+// Available Model Sizes
 export const availableModelSizes = derived(state, ($state) => {
 	const modelSizes = new Set<string>();
 	$state.models.forEach((model) => {
-		const nameParts = model.id.split('-');
-		// The part with /^\d+B$/ is the model size
-		nameParts.forEach((part) => {
-			if (/^\d+B$/.test(part)) {
-				modelSizes.add(part);
-			}
-		});
+		modelSizes.add(getModelSize(model));
 	});
 	return Array.from(modelSizes);
 });

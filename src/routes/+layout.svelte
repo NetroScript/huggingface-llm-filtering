@@ -40,7 +40,7 @@
 				</div>
 				<a
 					class="anchor m-4"
-					href="https://github.com/NetroScript/huggingface-llm-filtering/blob/master/LICENSE.md"
+					href="https://github.com/NetroScript/huggingface-llm-filtering/blob/master/LICENSE"
 					rel="noreferrer"
 					target="_blank">MIT License</a
 				>
